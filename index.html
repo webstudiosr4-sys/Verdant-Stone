@@ -60,6 +60,12 @@
   const projectBar = projectShell?.querySelector('.projects-progress b');
   const footer = document.querySelector('.footer-lower');
   let frame = 0;
+  let branchFrame = 0;
+  let branchTarget = 0;
+  let branchPlayhead = 0;
+  let branchLastTimestamp = 0;
+  let branchSeekPending = false;
+  let branchReady = false;
 
   function initializeBlueprintCursor() {
     const finePointer = matchMedia('(hover: hover) and (pointer: fine)');
@@ -223,9 +229,76 @@
     video.load();
     video.play().catch(() => {});
   });
+  function setBranchVideoOpacity(progress) {
+    branch?.style.setProperty('--branch-video-opacity', clamp(progress / 0.08).toFixed(4));
+  }
+
+  function applyBranchVideoTime() {
+    if (!branchVideo || !branchReady || branchSeekPending || !Number.isFinite(branchVideo.duration) || branchVideo.duration <= 0) return;
+    const nextTime = branchPlayhead * Math.max(0, branchVideo.duration - 0.03);
+    if (Math.abs(branchVideo.currentTime - nextTime) <= 0.006) return;
+    try {
+      branchSeekPending = true;
+      branchVideo.currentTime = nextTime;
+    } catch {
+      branchSeekPending = false;
+    }
+  }
+
+  function animateBranch(timestamp) {
+    branchFrame = 0;
+    if (!branchReady) return;
+
+    const previousTimestamp = branchLastTimestamp || timestamp;
+    const elapsed = Math.min(64, Math.max(8, timestamp - previousTimestamp));
+    branchLastTimestamp = timestamp;
+    const delta = branchTarget - branchPlayhead;
+    const distance = Math.abs(delta);
+
+    if (distance <= 0.0006) {
+      branchPlayhead = branchTarget;
+      branchLastTimestamp = 0;
+      setBranchVideoOpacity(branchPlayhead);
+      applyBranchVideoTime();
+      return;
+    }
+
+    const mobile = innerWidth <= 760;
+    const responseTime = mobile ? 540 : 460;
+    const smoothing = 1 - Math.exp(-elapsed / responseTime);
+    const maximumStep = (mobile ? 0.0065 : 0.009) * (elapsed / 16.667);
+    const minimumStep = 0.0003 * (elapsed / 16.667);
+    const step = Math.min(distance, maximumStep, Math.max(minimumStep, distance * smoothing));
+
+    branchPlayhead = clamp(branchPlayhead + Math.sign(delta) * step);
+    setBranchVideoOpacity(branchPlayhead);
+    applyBranchVideoTime();
+    branchFrame = requestAnimationFrame(animateBranch);
+  }
+
+  function queueBranchAnimation() {
+    if (!branchFrame && branchReady) branchFrame = requestAnimationFrame(animateBranch);
+  }
+
+  function syncBranchMetadata() {
+    if (!branchVideo || branchReady || !Number.isFinite(branchVideo.duration) || branchVideo.duration <= 0) return;
+    branchVideo.pause();
+    branchReady = true;
+    branchPlayhead = clamp(branchVideo.currentTime / branchVideo.duration);
+    setBranchVideoOpacity(branchPlayhead);
+    queueBranchAnimation();
+  }
+
   if (branchVideo) {
     branchVideo.preload = 'auto';
+    branchVideo.addEventListener('loadedmetadata', syncBranchMetadata);
+    branchVideo.addEventListener('seeked', () => {
+      branchSeekPending = false;
+      applyBranchVideoTime();
+      queueBranchAnimation();
+    });
     branchVideo.load();
+    if (branchVideo.readyState >= HTMLMediaElement.HAVE_METADATA) syncBranchMetadata();
   }
 
   function measureProjects() {
@@ -242,13 +315,9 @@
       const rect = branch.getBoundingClientRect();
       const progress = clamp(-rect.top / Math.max(1, rect.height - innerHeight));
       const bloom = clamp((progress - 0.14) / 0.62);
-      const eased = bloom * bloom * bloom * (bloom * (bloom * 6 - 15) + 10);
       branch.style.setProperty('--branch-progress', progress.toFixed(4));
-      branch.style.setProperty('--branch-video-opacity', clamp(bloom / 0.12).toFixed(4));
-      if (branchVideo?.duration && Number.isFinite(branchVideo.duration)) {
-        const nextTime = eased * Math.max(0, branchVideo.duration - 0.03);
-        if (Math.abs(branchVideo.currentTime - nextTime) > 0.025) branchVideo.currentTime = nextTime;
-      }
+      branchTarget = bloom;
+      queueBranchAnimation();
       const stages = { eyebrow: [0.35, 0.1], title: [0.38, 0.12], body: [0.42, 0.13] };
       for (const [key, [start, span]] of Object.entries(stages)) {
         const stage = clamp((progress - start) / span);
@@ -388,7 +457,6 @@
 
   addEventListener('scroll', queue, { passive: true });
   addEventListener('resize', () => { measureProjects(); queue(); });
-  branchVideo?.addEventListener('loadedmetadata', queue);
   measureProjects();
   queue();
 })();
