@@ -1,33 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://verdant-stone-landscape.serhiyradko3010.chatgpt.site/</loc>
-    <lastmod>2026-08-31</lastmod>
+    <loc>https://verdant-stone-gold.vercel.app/</loc>
+    <lastmod>2026-09-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>1.0</priority>
-  </url>
-  <url>
-    <loc>https://verdant-stone-landscape.serhiyradko3010.chatgpt.site/privacy-policy</loc>
-    <lastmod>2026-08-31</lastmod>
-    <changefreq>yearly</changefreq>
-    <priority>0.3</priority>
-  </url>
-  <url>
-    <loc>https://verdant-stone-landscape.serhiyradko3010.chatgpt.site/terms-of-use</loc>
-    <lastmod>2026-08-31</lastmod>
-    <changefreq>yearly</changefreq>
-    <priority>0.3</priority>
-  </url>
-  <url>
-    <loc>https://verdant-stone-landscape.serhiyradko3010.chatgpt.site/legal-information</loc>
-    <lastmod>2026-08-31</lastmod>
-    <changefreq>yearly</changefreq>
-    <priority>0.3</priority>
-  </url>
-  <url>
-    <loc>https://verdant-stone-landscape.serhiyradko3010.chatgpt.site/cookie-policy</loc>
-    <lastmod>2026-08-31</lastmod>
-    <changefreq>yearly</changefreq>
-    <priority>0.3</priority>
   </url>
 </urlset>
