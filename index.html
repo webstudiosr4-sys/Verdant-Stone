@@ -47,18 +47,6 @@
   -webkit-mask-image: none !important;
   mask-image: none !important;
 }
-.perspective-featured-shade {
-  background: linear-gradient(180deg,rgba(4,20,12,.01) 8%,rgba(4,20,12,.08) 48%,rgba(4,20,12,.68) 78%,rgba(7,27,18,.94) 100%) !important;
-}
-.perspective-featured-copy {
-  right: auto !important;
-  width: min(88%,590px);
-  padding: clamp(24px,2.2vw,36px) !important;
-}
-.perspective-featured-copy .perspective-quote-mark { top: 2px !important; right: clamp(22px,2.2vw,36px) !important; font-size: clamp(52px,4vw,70px) !important; }
-.perspective-featured-copy blockquote { margin: 0 0 20px !important; }
-.perspective-featured-copy blockquote p { font-size: clamp(22px,1.7vw,31px) !important; line-height: 1.12 !important; }
-.perspective-featured .perspective-detail { margin-top: 13px !important; padding-top: 12px !important; font-size: clamp(12px,.85vw,14px) !important; line-height: 1.48 !important; }
 @media (max-width: 760px) {
   .home-hero { background-image: url('assets/hero-mobile.jpg') !important; }
   .home-hero h1 { animation-name: hero-title-mobile-reveal !important; }
@@ -75,14 +63,6 @@
     transform-origin: center bottom;
     will-change: transform, opacity;
   }
-  .perspective-featured-copy { width: min(94%,440px); padding: 20px 18px !important; }
-  .perspective-featured-copy blockquote { margin-bottom: 18px !important; }
-  .perspective-featured-copy blockquote p { font-size: clamp(20px,5.8vw,24px) !important; line-height: 1.15 !important; }
-  .perspective-featured-copy .perspective-quote-mark { right: 18px !important; font-size: 50px !important; }
-  .perspective-featured .perspective-person > span { width: 40px; height: 40px; }
-  .perspective-featured .perspective-person cite { font-size: 12px; }
-  .perspective-featured .perspective-person small { font-size: 9px; }
-  .perspective-featured .perspective-detail { margin-top: 11px !important; padding-top: 10px !important; font-size: 11px !important; line-height: 1.45 !important; }
 }
 @keyframes hero-title-mobile-reveal {
   from { opacity: 0; transform: translate3d(0,var(--hero-reveal-y,28px),0); }
